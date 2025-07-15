@@ -5,24 +5,7 @@ import Image from 'next/image';
 const HeroSection = () => {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="flex justify-center items-center py-6 px-4">
-        <div className="flex space-x-8">
-          <a href="#home" className="text-gray-700 hover:text-gray-900 font-medium">
-            Home
-          </a>
-          <a href="#about" className="text-gray-700 hover:text-gray-900 font-medium">
-            About us
-          </a>
-          <a href="#portfolio" className="text-gray-700 hover:text-gray-900 font-medium">
-            Portfolio
-          </a>
-          <a href="#contact" className="text-gray-700 hover:text-gray-900 font-medium">
-            Contact us
-          </a>
-        </div>
-      </nav>
-
+      
       {/* Hero Content */}
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
