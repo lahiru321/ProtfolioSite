@@ -1,23 +1,58 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
+  const [activeSection, setActiveSection] = useState("home");
 
   const navItems = [
-    { name: "Home", href: "/" },
-    { name: "About", href: "/about" },
-    { name: "Projects", href: "/projects" },
-    { name: "Contact", href: "/contact" },
+    { name: "Home", href: "#home" },
+    { name: "About", href: "#about" },
+    { name: "Projects", href: "#projects" },
+    { name: "Contact", href: "#contact" },
   ];
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
+  // Smooth scroll function
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+    setIsOpen(false); // Close mobile menu after clicking
+  };
+
+  // Handle click on navigation items
+  const handleNavClick = (href) => {
+    const sectionId = href.substring(1); // Remove the '#' from href
+    scrollToSection(sectionId);
+  };
+
+  // Track active section based on scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = navItems.map(item => item.href.substring(1));
+      const scrollPosition = window.scrollY + 100; // Offset for fixed navbar
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = document.getElementById(sections[i]);
+        if (section && section.offsetTop <= scrollPosition) {
+          setActiveSection(sections[i]);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <nav className="bg-white shadow-lg fixed w-full top-0 z-50">
@@ -25,26 +60,29 @@ const Navigation = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="text-xl font-bold text-gray-800">
+            <button
+              onClick={() => scrollToSection("home")}
+              className="text-xl font-bold text-gray-800 hover:text-blue-600 transition-colors duration-200"
+            >
               Portfolio
-            </Link>
+            </button>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2">
             <div className="flex items-baseline space-x-8">
               {navItems.map((item) => (
-                <Link
+                <button
                   key={item.name}
-                  href={item.href}
+                  onClick={() => handleNavClick(item.href)}
                   className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
-                    pathname == item.href
+                    activeSection === item.href.substring(1)
                       ? "text-blue-600 border-b-2 border-blue-600"
                       : "text-gray-700 hover:text-blue-600"
                   }`}
                 >
                   {item.name}
-                </Link>
+                </button>
               ))}
             </div>
           </div>
@@ -75,18 +113,17 @@ const Navigation = () => {
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-200">
             {navItems.map((item) => (
-              <Link
+              <button
                 key={item.name}
-                href={item.href}
-                className={`block px-3 py-2 text-base font-medium transition-colors duration-200 ${
-                  pathname === item.href
+                onClick={() => handleNavClick(item.href)}
+                className={`block w-full text-left px-3 py-2 text-base font-medium transition-colors duration-200 ${
+                  activeSection === item.href.substring(1)
                     ? "text-blue-600 bg-blue-50"
                     : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                 }`}
-                onClick={() => setIsOpen(false)}
               >
                 {item.name}
-              </Link>
+              </button>
             ))}
           </div>
         </div>
